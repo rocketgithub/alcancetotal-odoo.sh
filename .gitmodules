@@ -16,3 +16,7 @@
 [submodule "losvolcanes"]
 	path = losvolcanes
 	url = git@github.com:rocketgithub/atd.git
+[submodule "hr_expense_invoice"]
+	path = hr_expense_invoice
+	url = git@github.com:aquih/hr_expense_invoice.git
+	branch = 17.0
