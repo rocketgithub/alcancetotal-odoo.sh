@@ -16,3 +16,7 @@
 [submodule "losvolcanes"]
 	path = losvolcanes
 	url = git@github.com:rocketgithub/atd.git
+[submodule "atd_propiedades"]
+	path = atd_propiedades
+	url = git@github.com:angel-ochoa/atd-propiedades.git
+	branch = 16.0
