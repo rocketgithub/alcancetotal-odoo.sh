@@ -20,3 +20,7 @@
 	path = atd_propiedades
 	url = git@github.com:angel-ochoa/atd-propiedades.git
 	branch = 16.0
+[submodule "hr_expense_invoice"]
+	path = hr_expense_invoice
+	url = git@github.com:aquih/hr_expense_invoice.git
+	branch = 17.0
