@@ -1,7 +1,3 @@
-[submodule "l10n_gt_extra"]
-	path = l10n_gt_extra
-	url = https://github.com/rocketgithub/l10n_gt_extra.git
-	branch = 11.0
 [submodule "conciliacion_bancaria"]
 	path = conciliacion_bancaria
 	url = https://github.com/rocketgithub/conciliacion_bancaria.git

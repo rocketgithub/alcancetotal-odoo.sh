@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="reporte_diario">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="15"/>
+            <t t-set="data_report_header_spacing" t-value="8"/>
+            <div class="header">
+                Folio: <span class="page" t-esc="data['folio_inicial']-1"></span>
+            </div>
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .compact-report {
+                            font-size: 10px;
+                            line-height: 1.2;
+                        }
+                        .compact-report h2 {
+                            font-size: 14px;
+                            margin-bottom: 8px;
+                            margin-top: 4px;
+                        }
+                        .compact-report .table {
+                            margin-bottom: 8px;
+                            font-size: 9px;
+                        }
+                        .compact-report .table th,
+                        .compact-report .table td {
+                            padding: 2px 4px;
+                            border-top: 1px solid #ddd;
+                            vertical-align: top;
+                        }
+                        .compact-report .company-info {
+                            margin-bottom: 8px;
+                            margin-top: 8px;
+                        }
+                        .compact-report .company-info strong {
+                            font-size: 9px;
+                        }
+                        .compact-report .company-info span {
+                            font-size: 9px;
+                        }
+                        .compact-report .table thead th {
+                            background-color: #f5f5f5;
+                            font-weight: bold;
+                            font-size: 9px;
+                        }
+                        .compact-report .table {
+                            page-break-inside: auto;
+                        }
+                        .compact-report .table tbody tr {
+                            page-break-inside: avoid;
+                        }
+                        .compact-report .table thead {
+                            display: table-header-group;
+                        }
+                        @media print {
+                            .page {
+                                margin-top: 80px !important;
+                            }
+                            .compact-report .table {
+                                margin-top: 20px;
+                            }
+                        }
+                    </style>
+                    <div class="compact-report">
+                        <h2><span t-field="current_company_id.name"/>: Libro Diario</h2>
+
+                        <div class="row company-info">
+                        <div class="col-auto mw-100 mb-1">
+                            <strong>Número de identificación tributaria:</strong> <span t-field="current_company_id.vat"/><br/>
+                            <strong>Nombre comercial:</strong> <span t-field="current_company_id.partner_id.name"/><br/>
+                        </div>
+                        <div class="col-auto mw-100 mb-1">
+                            <strong>Domicilio fiscal:</strong> <span t-field="current_company_id.partner_id.street"/><br/>
+                            <strong>Registro del:</strong> <span t-esc="data['fecha_desde']" t-options="{'widget': 'date'}"/> al: <span t-esc="data['fecha_hasta']" t-options="{'widget': 'date'}"/><br/>
+                        </div>
+                    </div>
+
+                    <t t-set="result" t-value="lineas(data)"/>
+                    
+                    <table class="table table-condensed table-sm">
+                        <t t-if="data['agrupado_por_dia'] == true">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Codigo</th>
+                                    <th>Cuenta</th>
+                                    <th class="text-right">Debe</th>
+                                    <th class="text-right">Haber</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="result['lineas']" t-as="l">
+                                    <tr class="date-header">
+                                        <td colspan="5" style="background-color: #f8f9fa; font-weight: bold; padding: 3px 4px;">
+                                            <span t-esc="l['fecha']" t-options="{'widget': 'date'}"/>
+                                        </td>
+                                    </tr>
+                                    <t t-foreach="l['cuentas']" t-as="ld">
+                                        <tr>
+                                            <td></td>
+                                            <td><span t-esc="ld['codigo']"/></td>
+                                            <td><span t-esc="ld['cuenta']"/></td>
+                                            <td class="text-right"><span t-esc="ld['debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></td>
+                                            <td class="text-right"><span t-esc="ld['haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr style="border-top: 2px solid #333;">
+                                        <td colspan="3" style="text-align: right; padding-right: 8px;">
+                                            <b>Totales:</b>
+                                        </td>
+                                        <td class="text-right">
+                                            <b><span t-esc="l['total_debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                                        </td>
+                                        <td class="text-right">
+                                            <b><span t-esc="l['total_haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </t>
+                        <t t-else="">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Cuenta</th>
+                                    <th class="text-right">Debe</th>
+                                    <th class="text-right">Haber</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="result['lineas']" t-as="l">
+                                    <td>
+                                        <span t-esc="l['codigo']"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="l['cuenta']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="l['debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="l['haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr style="border-top: 2px solid #333;">
+                                    <td colspan="2" style="text-align: right; padding-right: 8px;">
+                                        <b>Totales:</b>
+                                    </td>
+                                    <td class="text-right">
+                                        <b><span t-esc="result['totales']['debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                                    </td>
+                                    <td class="text-right">
+                                        <b><span t-esc="result['totales']['haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </t>
+                    </table>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
