@@ -1,0 +1,175 @@
+show databases
+\q
+select * from users;
+select * from user;
+\dt user;
+\d+ user
+select count(*) from user
+;
+select * form user;
+select * from user;
+insert into user (email, password) values ('angel.ochoa@exsimp.com','$2y$13$Rq5/ExvY34WMPCrtVTPSMudiCZNSLvUICPbWjEoqyWutw11xfVmZK');
+insert into app.user (email, password) values ('angel.ochoa@exsimp.com','$2y$13$Rq5/ExvY34WMPCrtVTPSMudiCZNSLvUICPbWjEoqyWutw11xfVmZK');
+insert into user(email, password) values ('angel.ochoa@exsimp.com','$2y$13$Rq5/ExvY34WMPCrtVTPSMudiCZNSLvUICPbWjEoqyWutw11xfVmZK');
+INSERT INTO  user (email, password) values ('angel.ochoa@exsimp.com','$2y$13$Rq5/ExvY34WMPCrtVTPSMudiCZNSLvUICPbWjEoqyWutw11xfVmZK');
+\D
+\d
+INSERT INTO  public.user (email, password) values ('angel.ochoa@exsimp.com','$2y$13$Rq5/ExvY34WMPCrtVTPSMudiCZNSLvUICPbWjEoqyWutw11xfVmZK');
+\dt
+selet * from doctrine_migration_versions ;
+select * from doctrine_migration_versions ;
+select * from doctrine_migration_versions ;
+select * from doctrine_migration_versions ;
+\dt
+selet * from doctrine_migration_versions ;
+select * from users;
+insert into users (email, password) values ('angel.ochoa@exsimp.com', '$2y$13$R9AQeLbM0LDyuxZid8pv3.6gRrTOL57gZ7WNhKbxsI5H259V9HX9S ');
+insert into users (id, email, password) values (nextval('users_id_seq'), 'angel.ochoa@exsimp.com', '$2y$13$R9AQeLbM0LDyuxZid8pv3.6gRrTOL57gZ7WNhKbxsI5H259V9HX9S ');
+insert into users (id, email, password, roles) values (nextval('users_id_seq'), 'angel.ochoa@exsimp.com', '$2y$13$R9AQeLbM0LDyuxZid8pv3.6gRrTOL57gZ7WNhKbxsI5H259V9HX9S ','{}');
+select * from users;
+selet * from doctrine_migration_versions ;
+select * from doctrine_migration_versions ;
+insert into users (id, email, password, roles) values (nextval('users_id_seq'), 'angel.ochoa@exsimp.com', '$2y$13$R9AQeLbM0LDyuxZid8pv3.6gRrTOL57gZ7WNhKbxsI5H259V9HX9S ','{}');
+insert into user (id, email, password, roles) values (nextval('users_id_seq'), 'angel.ochoa@exsimp.com', '$2y$13$R9AQeLbM0LDyuxZid8pv3.6gRrTOL57gZ7WNhKbxsI5H259V9HX9S ','{}');
+insert into public.user (id, email, password, roles) values (nextval('users_id_seq'), 'angel.ochoa@exsimp.com', '$2y$13$R9AQeLbM0LDyuxZid8pv3.6gRrTOL57gZ7WNhKbxsI5H259V9HX9S ','{}');
+insert into public.user (id, email, password, roles) values (nextval('user_id_seq'), 'angel.ochoa@exsimp.com', '$2y$13$R9AQeLbM0LDyuxZid8pv3.6gRrTOL57gZ7WNhKbxsI5H259V9HX9S ','{}');
+select * from public.user;
+update user set password = '$2y$13$WIi5nYu2X.b8KFJVZK7PKufTrBuMFU7illRAPpetSyBCKkaqxo26C';
+update public.user set password = '$2y$13$WIi5nYu2X.b8KFJVZK7PKufTrBuMFU7illRAPpetSyBCKkaqxo26C';
+select * from public.user;
+select * from public.user
+;
+select * from public.user
+;
+\dt
+\dt
+select * from public.user
+;
+\dt
+selecdt * from company;
+\dt;
+select * from company;
+select * from user;
+select * from public.user;
+\dt company;
+\d+ company;
+select * from public.user;
+\q
+select * from public.user;
+select * from public.user;
+select * from users;
+;
+;;
+select * from public.user;
+\dt+
+select * from public.users
+;
+show dataabases;
+show databases;
+\db
+\t
+select * from visit;
+truncate visit;
+select * from visit_record;
+delete * from visit;
+delete from visit;
+\q
+show users;
+\u;
+users;
+createuser angelochoa
+;
+create user angelochoa
+;
+\d users;
+\d user;
+show databases;
+show database;
+\db
+\user
+\users
+craetedb atddev;
+create database atddev
+;
+\q
+create user ultradev
+;
+\l
+\d atddev
+\c atddev
+\dt
+\l
+\l
+\l
+\du
+\l
+\l
+\du
+\du+
+\du
+\db
+\l
+create user atddev
+;
+alter user atddev WITH PASSWORD atddev
+;
+alter user atddev WITH PASSWORD 'atddev';
+drop database angelochoa;
+drop database angelochoa;
+\c angelochoa;
+\du
+\l
+\l
+\q
+\l
+\l
+\c atdprod
+\dt
+ \q
+\l
+\c atdprod;
+\dt
+select * from ir_module_module;
+select * from ir_module_module;
+select name, create_date, author from ir_module_module;
+select name, create_date, author from ir_module_module where author =! 'Odoo S.A.';
+select name, create_date, author from ir_module_module where author <> 'Odoo S.A.';;2D
+\lt
+\dt
+\dt
+\t
+\dt
+select * from order_line;
+select * from order_lines;
+\h
+\t
+\dt
+\db
+\t+
+\dt
+use atd;
+\cd atddev
+\c atddev
+\dt
+\c atdprod
+\dt
+select * from sale_order_line limit 1;
+\c atdprod;
+select * from sale_order_line limit 1;
+select * from sale_order limit1;
+select * from sale_order where name = 'SO1639';
+select * from sale_order_line where order_id = 3403;
+select * from sale_order_line where order_id = 3403;
+select * from sale_order_line where order_id = 3403;
+select * from sale_order_line where order_id = 3403;
+\q
+\db
+use atd
+;
+\dt
+\d
+\lt
+\db
+\l
+use atdprod;
+\s atdprod

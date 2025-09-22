@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_property_tree" model="ir.ui.view">
+        <field name="name">real.estate.property.tree</field>
+        <field name="model">real.estate.property</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="property_type_id"/>
+                <field name="property_model_id"/>
+                <field name="partner_id"/>
+                <field name="price"/>
+                <field name="square_meters"/>
+                <field name="bedrooms"/>
+                <field name="bathrooms"/>
+                <field name="finca"/>
+                <field name="folio"/>
+                <field name="libro"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'available'"
+                       decoration-info="state == 'reserved'"
+                       decoration-danger="state == 'sold'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_property_form" model="ir.ui.view">
+        <field name="name">real.estate.property.form</field>
+        <field name="model">real.estate.property</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="available,reserved,sold" 
+                           options="{'clickable': '1'}" readonly="1"/>
+                </header>
+                <sheet>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" 
+                                groups="sales_team.group_sale_manager">
+                            <field name="active" widget="boolean_button" groups="sales_team.group_sale_manager"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nombre de la Propiedad" readonly="1" groups="!sales_team.group_sale_manager"/>
+                            <field name="name" placeholder="Nombre de la Propiedad" groups="sales_team.group_sale_manager"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="proyecto_id" options="{'no_create': True}" groups="sales_team.group_sale_manager"/>
+                            <field name="property_type_id" groups="sales_team.group_sale_manager"/>
+                            <field name="property_model_id" groups="sales_team.group_sale_manager"/>
+                            <field name="partner_id" groups="sales_team.group_sale_manager"/>
+                            <field name="price" groups="sales_team.group_sale_manager"/>
+                            
+                            <field name="proyecto_id" options="{'no_create': True}" readonly="1" groups="!sales_team.group_sale_manager"/>
+                            <field name="property_type_id" readonly="1" groups="!sales_team.group_sale_manager"/>
+                            <field name="property_model_id" readonly="1" groups="!sales_team.group_sale_manager"/>
+                            <field name="partner_id" readonly="1" groups="!sales_team.group_sale_manager"/>
+                            <field name="price" readonly="1" groups="!sales_team.group_sale_manager"/>
+                            
+                            <field name="total_price" readonly="1" force_save="1"/>
+                            <field name="company_id" options="{'no_create': True}"
+                                   groups="base.group_multi_company"/>
+                            <field name="nivel" string="Nivel"/>
+                            <field name="number"/>
+                            <field name="vista"/>
+                            
+                        </group>
+                        <group>
+                            <field name="bedrooms"/>
+                            <field name="bedrooms_description"/>
+                            <field name="bathrooms"/>
+                            <field name="bathrooms_description"/>
+                            <field name="parqueos" readonly="1"/>
+                            <field name="parqueos_description"/>
+                        </group>
+                    </group>
+                    <group string="Áreas">
+                        <group>
+                            <field name="area_apartamento"/>
+                            <field name="area_balcon"/>
+                            <field name="area_jardin"/>
+                        </group>
+                        <group>
+                            <field name="square_meters" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Información General">
+                            <group>
+                                <field name="description"/>
+                                <field name="address"/>
+                            </group>
+                            <group string="Información Registral">
+                                <group>
+                                    <field name="finca"/>
+                                    <field name="folio"/>
+                                    <field name="libro"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Detalles de Acabados">
+                            <group>
+                                <group>
+                                    <field name="areas"/>
+                                    <field name="gabinetes"/>
+                                    <field name="puertas"/>
+                                    <field name="piso"/>
+                                </group>
+                                <group>
+                                    <field name="lavanderia"/>
+                                    <field name="agua"/>
+                                    <field name="closet"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Propiedades Relacionadas">
+                            <group>
+                                <field name="parent_property_id"/>
+                                <field name="child_property_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="property_type_id"/>
+                                        <field name="state"/>
+                                        <field name="price"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Ventas">
+                            <field name="sale_line_ids" readonly="1">
+                                <tree>
+                                    <field name="order_id"/>
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="price_unit"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_property_search" model="ir.ui.view">
+        <field name="name">real.estate.property.search</field>
+        <field name="model">real.estate.property</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="property_type_id"/>
+                <field name="partner_id"/>
+                <field name="state"/>
+                <field name="finca"/>
+                <field name="folio"/>
+                <field name="libro"/>
+                <separator/>
+                <filter string="Archivado" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="1" string="Agrupar Por">
+                    <filter string="Tipo de Propiedad" name="property_type" context="{'group_by':'property_type_id'}"/>
+                    <filter string="Estado" name="state" context="{'group_by':'state'}"/>
+                    <filter string="Propietario" name="partner" context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_property_pivot" model="ir.ui.view">
+        <field name="name">real.estate.property.pivot</field>
+        <field name="model">real.estate.property</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de Propiedades">
+                <field name="property_type_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="price" type="measure"/>
+                <field name="total_price" type="measure"/>
+                <field name="square_meters" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_properties" model="ir.actions.act_window">
+        <field name="name">Propiedades</field>
+        <field name="res_model">real.estate.property</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea la primera propiedad inmobiliaria!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+
+    <menuitem id="menu_properties"
+              name="Inventario de propiedades"
+              parent="sale.menu_sale_config"
+              groups="sales_team.group_sale_manager"
+              action="action_properties"
+              sequence="21"/>
+</odoo>

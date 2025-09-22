@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="common_report_styles">
+        <style>
+            @page,{
+                
+            }
+
+             .page {
+                margin-left: 25px;
+                margin-right: 25px;
+                padding-top: 30mm !important; 
+                padding-bottom: 20mm !important  ;
+                page-break-before: always;
+             }
+
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                font-weight: normal;
+                font-size: 12px;
+            }
+            strong {
+                color: #7c7c7c;
+            }
+            table {
+                border: none;
+                margin-bottom: 30px;
+                
+            }
+            thead, tbody, tfoot, tr, td, th {
+                border: none !important;
+            }
+            .page {
+                
+            }
+
+            .header {
+                left: 0;
+                right: 0;
+                margin: 25px 25px;
+                font-family: Arial, sans-serif !important;
+                color:black;    
+            }
+            .section-header {
+                text-align: left;
+                color: white;
+                background-color: #4c4c4c;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 14px;
+                
+            }
+
+            
+
+            .header-table {
+                width: 100%;
+                margin-bottom: 20px;
+                border: none !important;
+            }
+            .header-table td {
+                border: none !important;
+                padding: 3px;
+            }
+            .header-table tr th {
+                text-align: left;
+                background-color: #4c4c4c;  
+                color: white;
+                font-weight: bold;  
+                width: 100%;
+                padding: 6px;
+            }
+            
+
+            .section-header-secondary {
+                margin-top: 0px;
+                background-color: #7c7c7c;
+            }
+            .data-table {
+                width: 100%;
+                border: none !important;
+                margin-bottom: 10px;
+            }
+            .data-table td {
+                padding: 1px;
+                width: 25%;
+            }
+            .data-table td:nth-child(even),
+            .header-table td:nth-child(even) {
+                font-weight: normal;
+            }
+
+            .condiciones {
+                padding: 20px;
+                page-break-inside: auto;
+            }
+
+            .table-striped tr:nth-child(even) {
+                background-color: #f5f5f5;;
+            }
+            .table-striped thead tr {
+                background-color: transparent !important;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 4px 8px;
+                font-size: 12px;
+                font-weight: bold;
+                border-radius: 4px;
+                text-transform: uppercase;
+            }
+
+            .badge-danger {
+                background-color: #dc3545;
+                color: white;
+            }
+
+            .badge-success {
+                background-color: #28a745;
+                color: white;
+            }
+
+            
+        </style>
+    </template>
+</odoo> 

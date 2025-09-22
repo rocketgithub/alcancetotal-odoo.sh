@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_acuerdo_compra_venta">
+    
+        <t t-call="web.basic_layout">
+            
+            <t t-foreach="docs" t-as="doc">
+                
+                <t t-call="atd_propiedades.report_acuerdo_compra_venta_document"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_acuerdo_compra_venta_document">
+        <t t-call="atd_propiedades.common_report_styles"/>
+
+        <t t-set="condiciones">
+            <div class="section-header">Condiciones de Venta</div>
+            <table class="data-table">
+                <tr>
+                    <td><strong>Precio Total:</strong></td>
+                    <td class="text-right"><span t-field="doc.order_id.amount_total" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/></td>
+                    <td><strong>Tipo de Crédito:</strong></td>
+                    <td class="text-right"><span t-field="doc.order_id.tipo_credito"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Porcentaje Enganche:</strong></td>
+                    <td class="text-right"><span t-esc="doc.order_id.enganche_percentage *100" /> %</td>
+                    <td><strong>Banco:</strong></td>
+                    <td class="text-right"><span t-field="doc.order_id.banco_credito_id.name"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Monto Enganche total:</strong></td>
+                    <td class="text-right"><span t-field="doc.order_id.enganche_amount" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/></td>
+                    <td><strong>Cuotas de:</strong></td>
+                    <td class="text-right"><span t-field="doc.order_id.remaining_payment_amount" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/></td>
+                </tr>
+                <tr>
+                    <td><strong>Número de Pagos:</strong></td>
+                    <td class="text-right"><span t-field="doc.order_id.enganche_payments"/></td>
+                    <td><strong>Reserva:</strong></td>
+                    <td class="text-right"><span t-field="doc.order_id.first_payment_amount" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/></td>
+                </tr>
+                <tr>
+                    <td colspan="4">Saldo pendiente de <strong><span t-field="doc.order_id.remaining_balance" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/></strong> a ser cancelado por el comprador al momento de la escrituración.</td>
+                </tr>
+            </table>
+
+            <div class="section-header section-header-secondary">Plan de Pagos de Enganche</div>
+            <table class="data-table table-striped">
+                <thead>
+                    <tr>
+                        <td style="width: 16.66%;" class="text-center"><strong>No.</strong></td>
+                        <td style="width: 16.66%;" class="text-center"><strong>Fecha</strong></td>
+                        <td style="width: 16.66%;" class="text-right"><strong>Monto</strong></td>
+                        <td style="width: 16.66%;" class="text-center"><strong>No.</strong></td>
+                        <td style="width: 16.66%;" class="text-center"><strong>Fecha</strong></td>
+                        <td style="width: 16.66%;" class="text-right"><strong>Monto</strong></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-set="pagos" t-value="doc.order_id.pago_enganche_ids.filtered(lambda p: p.state in ['scheduled', 'due', 'received']).sorted(key=lambda p: p.payment_number)"/>
+                    <t t-set="half_length" t-value="len(pagos) // 2 + len(pagos) % 2"/>
+                    <t t-foreach="range(half_length)" t-as="i">
+                        <tr>
+                            <!-- Left column payment -->
+                            <td style="width: 16.66%;" class="text-center"><span t-field="pagos[i].payment_number"/></td>
+                            <td style="width: 16.66%;" class="text-center"><span t-field="pagos[i].expected_date" t-options='{"format": "dd/MM/yyyy"}'/></td>
+                            <td style="width: 16.66%;" class="text-right"><span t-field="pagos[i].amount" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/></td>
+                            
+                            <!-- Right column payment (if exists) -->
+                            <t t-if="i + half_length &lt; len(pagos)">
+                                <td style="width: 16.66%;" class="text-center"><span t-field="pagos[i + half_length].payment_number"/></td>
+                                <td style="width: 16.66%;" class="text-center"><span t-field="pagos[i + half_length].expected_date" t-options='{"format": "dd/MM/yyyy"}'/></td>
+                                <td style="width: 16.66%;" class="text-right"><span t-field="pagos[i + half_length].amount" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/></td>
+                            </t>
+                            <t t-else="">
+                                <td style="width: 16.66%;"> </td>
+                                <td style="width: 16.66%;"> </td>
+                                <td style="width: 16.66%;"> </td>
+                            </t>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+
+            <div class="section-header">Observaciones</div>
+            <div class="data-table">
+                <div t-field="doc.observaciones"/>
+            </div>
+
+            
+        </t>
+
+        <div class="header">
+            <t t-call="atd_propiedades.common_report_styles"/>
+            <div class="row">
+                <div class="col-12">
+                    <t t-if="docs.proyecto_id.icon">
+                        <img t-att-src="image_data_uri(docs.proyecto_id.icon)" alt="Atd Propiedades" style="width: 100%;"/>
+                    </t>
+                    
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="page">
+            <div class="section-header header-section-header">Acuerdo de Promesa de Compra Venta</div>
+                <table class="header-table">
+                    <tr>
+                        <td>
+                            <strong>Proyecto:</strong>
+                        </td>
+                        <td style="font-weight: normal;">
+                            <span t-field="doc.order_id.proyecto_id.name"/>
+                        </td>
+                        <td>
+                            <strong>Número de Acuerdo:</strong>
+                        </td>
+                        <td style="font-weight: normal;">
+                            <span t-field="doc.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Fecha:</strong>
+                        </td>
+                        <td>
+                            <span t-field="doc.create_date" t-options='{"format": "dd/MM/yyyy"}'/>
+                        </td>
+                        <td>
+                            <strong>Asesor:</strong>
+                        </td>
+                        <td>
+                            <span t-field="doc.order_id.user_id.name"/>
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Cliente:</strong>
+                        </td>
+                        <td>
+                            <span t-field="doc.order_id.partner_id.name"/>
+                        </td>
+                        <td>
+                            <strong>Propiedad:</strong>
+                        </td>
+                        <td>
+                            <span t-field="doc.order_id.property_id.name"/>
+                        </td>
+                    </tr>  
+                </table>
+            
+
+            <t t-set="doc" t-value="doc.with_context(lang=doc.order_id.partner_id.lang)" />
+            <div class="section-header">Información de la Propiedad</div>
+            <t t-set="numprop" t-value="0"/>
+            <t t-foreach="doc.order_id.order_line.filtered(lambda l: l.property_id)" t-as="line">
+                <t t-if="numprop > 0">
+                    <div class="section-header section-header-secondary">Propiedad Adicional</div>
+                </t>
+                <t t-set="numprop" t-value="numprop + 1"/>
+                <table class="data-table">
+                    <tr>
+                        <td>
+                            <t t-if="line.property_id.property_type_id.name == 'Apartamento'">
+                                <strong>Modelo:</strong>
+                            </t>
+                            <t t-else="">
+                                <strong>Nombre:</strong>
+                            </t>
+                        </td>
+                        <td>
+                            <span t-field="line.property_id.name"/>
+                        </td>
+                        <td>
+                            <strong>Número:</strong>
+                        </td>
+                        <td>
+                            <span t-field="line.property_id.number"/>
+                        </td>   
+                    </tr>
+                    <tr>
+                        <td>
+                            <t t-if="line.property_id.property_type_id.name == 'Apartamento'">
+                            <strong>Nivel:</strong>
+                            </t>
+                            <t t-else="">
+                                <strong>Ubicación:</strong>
+                            </t>
+                        </td>
+                        <td>
+                            <span t-field="line.property_id.nivel"/>
+                        </td>
+                        <td>
+                            <strong>Tipo:</strong>
+                        </td>
+                        <td>
+                            <span t-field="line.property_id.property_type_id.name"/>
+                        </td>
+                    </tr>
+                    
+
+                    <t t-if="line.property_id.property_type_id.name == 'Apartamento'">
+                        <tr>
+                            <td>
+                                <strong>Vista:</strong>
+                            </td>
+                            <td>
+                                <span t-field="line.property_id.vista"/>
+                            </td>
+                            <td>
+                                <strong>Precio:</strong>
+                            </td>
+                            <td>
+                                <span t-field="line.property_id.price" t-options='{"widget": "monetary", "display_currency": doc.order_id.currency_id}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Habitaciones:</strong>
+                            </td>
+                            <td>
+                                <t t-if="line.property_id.bedrooms_description">
+                                    <span t-field="line.property_id.bedrooms_description"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="line.property_id.bedrooms"/>
+                                </t>
+                            </td>
+                            <td>
+                                <strong>Baños:</strong>
+                            </td>
+                            <td>
+                                <t t-if="line.property_id.bathrooms_description">
+                                    <span t-field="line.property_id.bathrooms_description"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="line.property_id.bathrooms"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Parqueos:</strong>
+                            </td>
+                            <td>
+                                <t t-if="line.property_id.parqueos_description">
+                                    <span t-field="line.property_id.parqueos_description"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="line.property_id.parqueos"/>
+                                </t>
+                            </td>
+                            <td>
+                                <strong>Modelo:</strong>
+                            </td>
+                            <td>
+                                <span t-field="line.property_id.property_model_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Área Apartamento:</strong>
+                            </td>
+                            <td>
+                                <span t-field="line.property_id.area_apartamento"/> m²
+                            </td>
+                            <td>
+                                <strong>Área Balcón:</strong>
+                            </td>
+                            <td>
+                                <span t-field="line.property_id.area_balcon"/> m²
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Área Jardín:</strong>
+                            </td>
+                            <td>
+                                <span t-field="line.property_id.area_jardin"/> m²
+                            </td>
+                            <td>
+                                <strong>Área Total:</strong>
+                            </td>
+                            <td>
+                                <span t-field="line.property_id.square_meters"/> m²
+                            </td>
+                        </tr>
+                    </t>
+                    
+                </table>
+            </t>
+
+            <div class="section-header">Información del Comprador</div>
+            <table class="data-table">
+                <tr>
+                    <td>
+                        <strong>Nombres:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_nombres"/>
+                    </td>
+                    <td>
+                        <strong>Apellidos:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_apellidos"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Estado Civil:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_estado_civil"/>
+                    </td>
+                    <td>
+                        <strong>Profesión:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_profesion"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>DPI:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_dpi"/>
+                    </td>
+                    <td>
+                        <strong>NIT:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_nit"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Teléfono:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_telefono"/>
+                    </td>
+                    <td>
+                        <strong>Email:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_email"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Dirección:</strong></td>
+                    <td><span t-field="doc.deudor_direccion"/></td>
+                    <td><strong>Nacionalidad:</strong></td>
+                    <td><span t-field="doc.deudor_nacionalidad"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de Nacimiento:</strong></td>
+                    <td><span t-field="doc.deudor_fecha_nacimiento" t-options='{"format": "dd/MM/yyyy"}'/></td>
+                    <td><strong>Edad:</strong></td>
+                    <td><span t-field="doc.deudor_edad"/></td>
+                </tr>
+            </table>
+
+            <div class="section-header section-header-secondary">Información Laboral del Comprador</div>
+            <table class="data-table">
+                <tr>
+                    <td>
+                        <strong>Empresa:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_empresa"/>
+                    </td>
+                    <td>
+                        <strong>Puesto:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_puesto"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Ingresos:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_ingresos_mensuales"/>
+                    </td>
+                    <td>
+                        <strong>Tiempo Laboral:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_tiempo_trabajo"/> años</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Actividad Económica:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_actividad_economica"/>
+                    </td>
+                    <td>
+                        <strong>Dirección Trabajo:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_direccion"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Teléfono Trabajo:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_telefono"/>
+                    </td>
+                    <td>
+                        <strong>Fecha de Ingreso:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_laborales_fecha_ingreso" t-options='{"format": "dd/MM/yyyy"}'/>
+                    </td>
+                </tr>
+            </table>
+            
+
+        <t t-if="doc.deudor_secundario_nombres">
+            
+                <div class="section-header">Información del Comprador Secundario</div>
+                <table class="data-table">
+                <tr>
+                    <td>
+                        <strong>Nombres:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_nombres"/>
+                    </td>
+                    <td>
+                        <strong>Apellidos:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_apellidos"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Estado Civil:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_estado_civil"/>
+                    </td>
+                    <td>
+                        <strong>Profesión:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_profesion"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>DPI:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_dpi"/>
+                    </td>
+                    <td>
+                        <strong>NIT:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_nit"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Teléfono:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_telefono"/>
+                    </td>
+                    <td>
+                        <strong>Email:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_email"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Dirección:</strong></td>
+                    <td><span t-field="doc.deudor_secundario_direccion"/></td>
+                    <td><strong>Nacionalidad:</strong></td>
+                    <td><span t-field="doc.deudor_secundario_nacionalidad"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de Nacimiento:</strong></td>
+                    <td><span t-field="doc.deudor_secundario_fecha_nacimiento" t-options='{"format": "dd/MM/yyyy"}'/></td>
+                    <td><strong>Edad:</strong></td>
+                    <td><span t-field="doc.deudor_secundario_edad"/></td>
+                </tr>
+            </table>
+
+            <div class="section-header section-header-secondary">Información Laboral del Comprador Secundario</div>
+            <table class="data-table">
+                <tr>
+                    <td>
+                        <strong>Empresa:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_empresa"/>
+                    </td>
+                    <td>
+                        <strong>Puesto:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_puesto"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Ingresos:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_ingresos_mensuales"/>
+                    </td>
+                    <td>
+                        <strong>Tiempo Laboral:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_tiempo_trabajo"/>
+ años</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Actividad Económica:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_actividad_economica"/>
+                    </td>
+                    <td>
+                        <strong>Dirección Trabajo:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_direccion"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Teléfono Trabajo:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_telefono"/>
+                    </td>
+                    <td>
+                        <strong>Fecha de Ingreso:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_secundario_laborales_fecha_ingreso" t-options='{"format": "dd/MM/yyyy"}'/>
+                    </td>
+                </tr>
+            </table>
+        
+        <t t-if="doc.deudor_terciario_nombres">
+            <div class="section-header">Información del Comprador Terciario</div>
+            <table class="data-table">
+                <tr>
+                    <td><strong>Nombres:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_nombres"/></td>
+                    <td><strong>Apellidos:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_apellidos"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Estado Civil:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_estado_civil"/></td>
+                    <td><strong>Profesión:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_profesion"/></td>
+                </tr>
+                <tr>
+                    <td><strong>DPI:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_dpi"/></td>
+                    <td><strong>NIT:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_nit"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Teléfono:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_telefono"/></td>
+                    <td><strong>Email:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_email"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Dirección:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_direccion"/></td>
+                    <td><strong>Nacionalidad:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_nacionalidad"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de Nacimiento:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_fecha_nacimiento" t-options='{"format": "dd/MM/yyyy"}'/></td>
+                    <td><strong>Edad:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_edad"/></td>
+                </tr>
+            </table>
+
+            <div class="section-header section-header-secondary">Información Laboral del Comprador Terciario</div>
+            <table class="data-table">
+                <tr>
+                    <td><strong>Empresa:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_laborales_empresa"/></td>
+                    <td><strong>Puesto:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_laborales_puesto"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Ingresos:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_laborales_ingresos_mensuales"/></td>
+                    <td><strong>Tiempo Laboral:</strong></td>
+                    <td><span t-field="doc.deudor_terciario_laborales_tiempo_trabajo"/> años</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Actividad Económica:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_terciario_laborales_actividad_economica"/>
+                    </td>
+                    <td>
+                        <strong>Dirección Trabajo:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_terciario_laborales_direccion"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Teléfono Trabajo:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_terciario_laborales_telefono"/>
+                    </td>
+                    <td>
+                        <strong>Fecha de Ingreso:</strong>
+                    </td>
+                    <td>
+                        <span t-field="doc.deudor_terciario_laborales_fecha_ingreso" t-options='{"format": "dd/MM/yyyy"}'/>
+                    </td>
+                </tr>
+            </table>
+        </t>
+        </t>
+
+        <t t-if="not doc.deudor_secundario_nombres and not doc.deudor_terciario_nombres">
+            <t t-raw="condiciones"/>
+        </t>
+        </div>
+
+        <t t-if="doc.deudor_secundario_nombres or doc.deudor_terciario_nombres">
+            <div class="page">
+                <t t-raw="condiciones"/>
+            </div>
+        </t>
+        
+        <div class="page">
+            <div class="section-header">Condiciones de la Venta</div>
+            <div class="data-table condiciones">
+                <div t-field="doc.condiciones_formatted"/>
+            </div>
+            <div style="margin-top: 10px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center; padding: 20px;">
+                            <div style="border-top: 1px solid black; padding-top: 5px;">
+                                <strong>Firma de aceptación del comprador</strong><br/>
+                                <span t-field="doc.deudor_nombres"/> <span t-field="doc.deudor_apellidos"/><br/>
+                                DPI: <span t-field="doc.deudor_dpi"/>
+                            </div>
+                        </td>
+                        <td style="width: 50%; text-align: center; padding: 20px;">
+                            <div style="border-top: 1px solid black; padding-top: 5px;">
+                                <strong>Asesor inmobiliario</strong><br/>
+                                <t t-if="doc.asesor">
+                                    <span t-field="doc.asesor"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="doc.order_id.user_id.name"/>
+                                </t>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+    </template>
+    <record id="paperformat_acuerdo_compra_venta" model="report.paperformat">
+        <field name="name">Oficio</field>
+        <field name="default" eval="True"/>
+        <field name="format">Legal</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_spacing">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_acuerdo_compra_venta" model="ir.actions.report">
+        <field name="name">Acuerdo de Compra Venta</field>
+        <field name="model">acuerdo.compra.venta</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">atd_propiedades.report_acuerdo_compra_venta</field>
+        <field name="report_file">atd_propiedades.report_acuerdo_compra_venta</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Acuerdo de Compra Venta - %s' % (object.order_id.name)</field>
+        <field name="paperformat_id" ref="paperformat_acuerdo_compra_venta"/>
+    </record>
+
+    
+</odoo> 

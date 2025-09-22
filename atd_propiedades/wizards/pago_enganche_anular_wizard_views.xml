@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pago_enganche_anular_wizard_form" model="ir.ui.view">
+        <field name="name">pago.enganche.anular.wizard.form</field>
+        <field name="model">pago.enganche.anular.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirmar Anulación">
+                <p>¿Está seguro que desea anular este pago? Esta acción creará un nuevo pago programado.</p>
+                <footer>
+                    <button string="Confirmar" name="action_confirm" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo> 

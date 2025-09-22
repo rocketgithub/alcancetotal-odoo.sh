@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_real_estate_proyecto_form" model="ir.ui.view">
+        <field name="name">real.estate.proyecto.form</field>
+        <field name="model">real.estate.proyecto</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="icon" widget="image" class="oe_avatar"/>
+                    <field name="company_id" invisible="1"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nombre del Proyecto"/>
+                        </h1>
+                    </div> 
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción">
+                            <field name="description"/>
+                        </page>
+                        <page string="Condiciones">
+                            <field name="condiciones" widget="html" options="{'codeview': true}"/>
+                        </page>
+                        <page string="Configuración" name="configuration">
+                            <group>
+                                <group string="Secuencia de Acuerdos de Venta">
+                                    <field name="sequence_prefix"/>
+                                    <field name="sequence_number"/>
+                                    <field name="sequence_padding"/>
+                                </group>
+                                <group string="Secuencia de Recibos">
+                                    <field name="recibo_sequence_prefix"/>
+                                    <field name="recibo_sequence_number"/>
+                                    <field name="recibo_sequence_padding"/>
+                                </group>
+                                <group string="Contabilidad">
+                                    <field name="enganche_account_id" 
+                                           domain="[('company_id', '=', company_id)]"
+                                           options="{'no_create': True}"
+                                    />
+                                    <field name="payment_deadline"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action window for proyectos -->
+    <record id="action_real_estate_proyecto" model="ir.actions.act_window">
+        <field name="name">Proyectos</field>
+        <field name="res_model">real.estate.proyecto</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu item under Sales Configuration -->
+    <menuitem id="menu_real_estate_proyecto"
+        name="Proyectos"
+        action="action_real_estate_proyecto"
+        parent="sale.menu_sale_config"
+        sequence="20"/>
+</odoo> 

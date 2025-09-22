@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_acuerdo_compra_venta" model="ir.sequence">
+            <field name="name">Acuerdo de Compra Venta</field>
+            <field name="code">acuerdo.compra.venta</field>
+            <field name="prefix">ACU</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo> 

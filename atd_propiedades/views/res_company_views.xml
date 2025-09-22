@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_company_form_inherit_real_estate" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.real.estate</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Bienes Raíces" name="real_estate">
+                    <group>
+                        <field name="enable_real_estate"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo> 

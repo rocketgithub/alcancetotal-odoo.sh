@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pago_enganche_tree" model="ir.ui.view">
+        <field name="name">pago.enganche.tree</field>
+        <field name="model">pago.enganche</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="order_id"/>
+                <field name="cliente"/>
+                <field name="propiedad"/>
+                <field name="payment_sequence"/>
+                <field name="expected_date"/>
+                <field name="received_date"/>
+                <field name="recibo_number"/>
+                <field name="amount"/>
+                <field name="amount_received"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'confirmed'"
+                       decoration-info="state == 'scheduled'"
+                       decoration-danger="state == 'due'"
+                       decoration-warning="state == 'received'"
+                       decoration-primary="state == 'draft'"/>
+                <field name="banco_emisor_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pago_enganche_form" model="ir.ui.view">
+        <field name="name">pago.enganche.form</field>
+        <field name="model">pago.enganche</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open_receive_wizard" 
+                            string="Recibir Pago" 
+                            type="object" 
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', 'in', ['anulado','draft', 'received', 'confirmed'])]}"/>
+                    <button name="action_send_receipt_email" 
+                            string="Enviar Comprobante" 
+                            type="object" 
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', 'not in', ['received', 'confirmed'])]}"
+                            icon="fa-envelope"/>
+                    <button name="action_download_report" 
+                            string="Descargar Recibo" 
+                            type="object" 
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'received')]}"
+                            icon="fa-download"/>
+                    <button name="action_open_anular_wizard" 
+                            string="Anular" 
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'anulado','scheduled'])]}"
+                            groups="sales_team.group_sale_manager"/>
+                    <button name="action_open_edit_wizard" 
+                            string="Editar Pago" 
+                            type="object" 
+                            groups="account.group_account_manager"
+                            attrs="{'invisible': [('state', 'not in', ['received', 'confirmed'])]}"
+                            class="oe_highlight"/>
+                    <field name="state" widget="statusbar"  
+                           statusbar_visible="draft,scheduled,due,received,confirmed,anulado"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="recibo_number" attrs="{ 'invisible': [('state', '!=', 'received')] }" readonly="1"/>
+                            <field name="order_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="cliente" readonly="1"/>
+                            <field name="propiedad" readonly="1"/>
+                            <field name="cliente_propiedad" readonly="1"/>
+                            <field name="expected_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="received_date" readonly="1"/>
+                            <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="amount_received" readonly="1"/>
+                            <field name="boleta" readonly="1"/>
+                            <field name="amount_received_text" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="payment_number" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="total_payments" readonly="1"/>
+                            <field name="payment_sequence" readonly="1"/>
+                            <field name="journal_id" readonly="1" string="Depsitado a"/>
+                            <field name="payment_type_id" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                            
+                            <field name="banco_emisor_id"  readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_pago_enganche_pivot" model="ir.ui.view">
+        <field name="name">pago.enganche.pivot</field>
+        <field name="model">pago.enganche</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de Pagos de Enganche">
+                <field name="order_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="amount" type="measure"/>
+                <field name="amount_received" type="measure"/>
+                <field name="expected_date" interval="month" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_pago_enganche" model="ir.actions.act_window">
+        <field name="name">Pagos de Enganche</field>
+        <field name="res_model">pago.enganche</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="context">{'search_default_my_orders': 1}</field>
+    </record>
+
+    <record id="view_pago_enganche_search" model="ir.ui.view">
+        <field name="name">pago.enganche.search</field>
+        <field name="model">pago.enganche</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="order_id"/>
+                <field name="name"/>
+                <field name="cliente"/>
+                <field name="propiedad"/>
+                <filter string="Mis Órdenes" name="my_orders" domain="[('order_id.user_id', '=', uid)]"/>
+                <filter string="Pagos Pendientes" name="pending_payments" domain="[('state', 'in', ['scheduled', 'due'])]"/>
+                <filter string="Pagos Recibidos" name="received_payments" domain="[('state', '=', 'received')]"/>
+                <filter string="Pagos Confirmados" name="confirmed_payments" domain="[('state', '=', 'confirmed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Orden de Venta" name="group_by_order" context="{'group_by': 'order_id'}"/>
+                    <filter string="Cliente" name="group_by_cliente" context="{'group_by': 'cliente'}"/>
+                    <filter string="Propiedad" name="group_by_propiedad" context="{'group_by': 'propiedad'}"/>
+                    <filter string="Estado" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Fecha Esperada" name="group_by_expected_date" context="{'group_by': 'expected_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Parent menu for real estate reports -->
+    <menuitem id="menu_real_estate_reports"
+              name="Reportes de Propiedades"
+              parent="sale.sale_menu_root"
+              sequence="100"
+              groups="sales_team.group_sale_manager"/>
+
+    <!-- Pagos de Enganche submenu -->
+    <menuitem id="menu_pago_enganche"
+              name="Pagos de Enganche"
+              action="action_pago_enganche"
+              parent="menu_real_estate_reports"
+              sequence="10"
+              groups="sales_team.group_sale_manager"/>
+</odoo> 

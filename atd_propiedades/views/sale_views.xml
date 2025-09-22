@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_inherit_reservation" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.reservation</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <field name="enable_real_estate" invisible="1"/>
+            </xpath>
+            <button name="action_confirm" position="after">
+                <button name="action_admin_confirm" 
+                        string="Confirmar Venta" 
+                        type="object" 
+                        class="btn-primary" 
+                        attrs="{'invisible': ['|', 
+                            ('state', '!=', 'reserved'),
+                            ('enable_real_estate', '=', False)]}"
+                        groups="sales_team.group_sale_manager"/>
+                
+                <button name="action_draft"
+                        string="Rechazar"
+                        type="object"
+                        attrs="{'invisible': ['|', 
+                            ('state', '!=', 'reserved'),
+                            ('enable_real_estate', '=', False)]}"
+                        groups="sales_team.group_sale_manager"/>
+                
+                <button name="action_cancel"
+                        string="Cancelar"
+                        type="object"
+                        attrs="{'invisible': ['|', 
+                            ('state', '!=', 'reserved'),
+                            ('enable_real_estate', '=', False)]}"
+                        groups="sales_team.group_sale_manager"/>
+            </button>
+            <field name="state" position="attributes">
+                <attribute name="statusbar_visible">draft,sent,reserved,sale</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_order_form_inherit_property" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.property</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="after">
+                <field name="enable_real_estate" invisible="1"/>
+                <field name="property_state" invisible="1"/>
+                <field name="property_id" 
+                       domain="[('state', '=', 'available')]"
+                       decoration-danger="property_state not in ['available', 'reserved']"
+                       attrs="{'invisible': [('enable_real_estate', '=', False)],
+                              'readonly': [('state', 'in', ['reserved', 'sale'])]}"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="attributes">
+                <attribute name="attrs">{'readonly': ['&amp;', ('property_id', '!=', False), ('state', 'in', ['reserved', 'sale'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_subtotal']" position="attributes">
+                <attribute name="attrs">{'readonly': ['&amp;', ('property_id', '!=', False), ('state', 'in', ['reserved', 'sale'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="after">
+                <field name="property_id" 
+                       domain="[('state', '=', 'available')]"
+                       attrs="{ 'readonly': [('state', 'in', ['reserved', 'sale'])] }"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="attributes">
+                <attribute name="attrs">{'readonly': ['&amp;', ('property_id', '!=', False), ('state', 'in', ['reserved', 'sale'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_subtotal']" position="attributes">
+                <attribute name="attrs">{'readonly': ['&amp;', ('property_id', '!=', False), ('state', 'in', ['reserved', 'sale'])]}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']" position="after">
+                <page string="Enganche" name="enganche" 
+                      attrs="{'invisible': [('enable_real_estate', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="enable_real_estate" invisible="1"/>
+                            <field name="amount_total" readonly="1" string="Total Venta"/>
+                            <field name="enganche_percentage" 
+                                   widget="percentage" 
+                                   options="{'digits': [3, 2]}"
+                                   placeholder="e.g.: 0.30 for 30%"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="enganche_amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="enganche_payments" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="remaining_balance" readonly="1" string="Saldo a Financiar"/> 
+                            <field name="pending_enganche_amount" readonly="1" string="Enganche Pendiente"/>
+                        </group>
+                        <group>
+                            <field name="first_payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                            <field name="first_payment_amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            
+                            <field name="remaining_payment_amount" readonly="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="banco_credito_id" 
+                           string="Banco de Crédito" 
+                           help="Seleccione el banco de crédito para la orden de venta."
+                           attrs="{'readonly': [('state', '!=', 'draft')]}"
+                           />
+                            <field name="tipo_credito" 
+                                   string="Tipo de Crédito" 
+                                   selection="[(fha, 'FHA'), ('credito_directo', 'Crédito directo'), ('contado', 'Contado')]" 
+                                   help="Seleccione el tipo de crédito."
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                   />
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//notebook/page[@name='enganche']" position="inside">
+                <group>
+                    <button name="action_compute_enganche" 
+                            string="Calcular Cuotas de Enganche" 
+                            type="object" 
+                            class="btn-primary"
+                            attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}"/>
+                    <button name="action_send_balance_report" 
+                            string="Enviar Estado de Cuenta" 
+                            type="object" 
+                            class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'sale')]}"/>
+                </group>
+                <field name="pago_enganche_ids" readonly="1">
+                    <tree>
+                        <field name="payment_sequence"/>
+                        <field name="expected_date"/>
+                        <field name="amount" sum="Total"/>
+                        
+                        <field name="amount_received" sum="Total"/>
+                        <field name="computed_amount" sum="Real"/>
+                        <field name="recibo_number"/>
+                        <field name="state" widget="badge" 
+                               decoration-success="state == 'confirmed'"
+                               decoration-info="state == 'scheduled'"
+                               decoration-danger="state == 'due'"
+                               decoration-warning="state == 'received'"
+                               decoration-muted="state == 'draft'"/>
+                               
+                    </tree>
+                </field>
+                
+            </xpath>
+            <xpath expr="//field[@name='validity_date']" position="attributes">
+                <attribute name="attrs">{'invisible': [('enable_real_estate', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('enable_real_estate', '=', True)]}</attribute>
+            </xpath>
+            
+            
+        </field>
+    </record>
+    <record id="view_order_form_inherit_acuerdo" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.acuerdo</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_acuerdo" 
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file-text-o"
+                        attrs="{'invisible': [('enable_real_estate', '=', False)]}">
+                    <field name="acuerdo_count" widget="statinfo" string="Acuerdo"/>
+                </button>
+            </div>
+        </field>
+    </record>
+    <record id="view_order_form_inherit_proyecto" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.proyecto</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="property_id" string="Propiedad"/>
+                <field name="proyecto_id"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_order_form_inherit_sale_management_ext" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.sale.management.ext</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_management.sale_order_form_quote"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='optional_products']" position="attributes">
+                <attribute name="attrs">{'invisible': [('enable_real_estate', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo> 

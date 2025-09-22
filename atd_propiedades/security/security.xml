@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="rule_pago_enganche_company" model="ir.rule">
+            <field name="name">Pagos Enganche: Multi-company rule</field>
+            <field name="model_id" ref="model_pago_enganche"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="global" eval="True"/>
+        </record>
+        <record id="property_company_rule" model="ir.rule">
+            <field name="name">Propiedad: Regla multi-compañía</field>
+            <field name="model_id" ref="model_real_estate_property"/>
+            <field name="domain_force">[('company_id', '=', company_id)]</field>
+            <field name="global" eval="True"/>
+        </record>
+        <record id="proyecto_company_rule" model="ir.rule">
+            <field name="name">Proyecto multi-company rule</field>
+            <field name="model_id" ref="model_real_estate_proyecto"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+
+    <!-- Add export rights to your custom group -->
+    <record id="sales_team.group_sale_salesman" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('base.group_allow_export'))]"/>
+    </record>
+
+    <!-- Or if you want to give it to managers only -->
+    <record id="sales_team.group_sale_manager" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('base.group_allow_export'))]"/>
+    </record>
+</odoo> 

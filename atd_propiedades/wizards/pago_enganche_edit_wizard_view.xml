@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pago_enganche_edit_wizard_form" model="ir.ui.view">
+        <field name="name">pago.enganche.edit.wizard.form</field>
+        <field name="model">pago.enganche.edit.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="pago_enganche_id" invisible="1"/>
+                    <field name="expected_date"/>
+                    <field name="received_date"/>
+                    <field name="journal_id"/>
+                    <field name="payment_type_id"/>
+                    <field name="amount_received"/>
+                    <field name="boleta"/>
+                    <field name="banco_emisor_id"/>
+                </group>
+                <footer>
+                    <button string="Confirmar" name="action_confirm" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo> 

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_acuerdo_compra_venta_form" model="ir.ui.view">
+        <field name="name">acuerdo.compra.venta.form</field>
+        <field name="model">acuerdo.compra.venta</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"/>
+                    <button name="action_print_if_complete" 
+                            string="Imprimir Acuerdo" 
+                            type="object" 
+                            class="oe_highlight"
+                            attrs="{'invisible': [('is_complete', '=', False)]}"/>
+                </header>
+                <div class="alert alert-warning" role="alert" attrs="{'invisible': [('is_complete', '=', True)]}">
+                    <field name="incomplete_reason" readonly="1" nolabel="1"/>
+                </div>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="order_id" readonly="1"/>
+                            <field name="proyecto_id"/>
+                            <field name="propiedad"/>
+                        </group>
+                        <group>
+                            <field name="dpi_attachment" widget="binary" filename="dpi_filename"/>
+                            <field name="acuerdo_firmado" widget="binary" filename="acuerdo_filename"/>
+                            <field name="is_complete"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <!-- Comprador Principal -->
+                        <page string="Comprador Principal" name="deudor_principal">
+                            <group>
+                                <group string="Información Personal">
+                                    <field name="deudor_nombres"/>
+                                    
+                                    <field name="deudor_apellidos"/>
+                                    <field name="deudor_estado_civil"/>
+                                    <field name="deudor_nacionalidad"/>
+                                    <field name="deudor_profesion"/>
+                                    <field name="deudor_direccion"/>
+                                    <field name="deudor_nit"/>
+                                    <field name="deudor_fecha_nacimiento"/>
+                                    <field name="deudor_dpi"/>
+                                    <field name="deudor_telefono"/>
+                                    <field name="deudor_email"/>
+                                    <field name="deudor_edad"/>
+                                </group>
+                                <group string="Información Laboral">
+                                    <field name="deudor_laborales_empresa"/>
+                                    <field name="deudor_laborales_puesto"/>
+                                    <field name="deudor_laborales_ingresos_mensuales"/>
+                                    <field name="deudor_laborales_fecha_ingreso"/>
+                                    <field name="deudor_laborales_telefono"/>
+                                    <field name="deudor_laborales_actividad_economica"/>
+                                    <field name="deudor_laborales_tiempo_trabajo"/>
+                                    <field name="deudor_laborales_direccion"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Comprador Secundario -->
+                        <page string="Comprador Secundario" name="deudor_secundario">
+                            <group>
+                                <group string="Información Personal">
+                                    <field name="deudor_secundario_nombres"/>
+                                    
+                                    <field name="deudor_secundario_apellidos"/>
+                                    <field name="deudor_secundario_estado_civil"/>
+                                    <field name="deudor_secundario_nacionalidad"/>
+                                    <field name="deudor_secundario_profesion"/>
+                                    <field name="deudor_secundario_direccion"/>
+                                    <field name="deudor_secundario_nit"/>
+                                    <field name="deudor_secundario_fecha_nacimiento"/>
+                                    <field name="deudor_secundario_dpi"/>
+                                    <field name="deudor_secundario_telefono"/>
+                                    <field name="deudor_secundario_email"/>
+                                    <field name="deudor_secundario_edad"/>
+                                </group>
+                                <group string="Información Laboral">
+                                    <field name="deudor_secundario_laborales_empresa"/>
+                                    <field name="deudor_secundario_laborales_puesto"/>
+                                    <field name="deudor_secundario_laborales_ingresos_mensuales"/>
+                                    <field name="deudor_secundario_laborales_fecha_ingreso"/>
+                                    <field name="deudor_secundario_laborales_telefono"/>
+                                    <field name="deudor_secundario_laborales_actividad_economica"/>
+                                    <field name="deudor_secundario_laborales_tiempo_trabajo"/>
+                                    <field name="deudor_secundario_laborales_direccion"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Comprador Terciario -->
+                        <page string="Comprador Terciario" name="deudor_terciario">
+                            <group>
+                                <group string="Información Personal">
+                                    <field name="deudor_terciario_nombres"/>
+                                    
+                                    <field name="deudor_terciario_apellidos"/>
+                                    <field name="deudor_terciario_estado_civil"/>
+                                    <field name="deudor_terciario_nacionalidad"/>
+                                    <field name="deudor_terciario_profesion"/>
+                                    <field name="deudor_terciario_direccion"/>
+                                    <field name="deudor_terciario_nit"/>
+                                    <field name="deudor_terciario_fecha_nacimiento"/>
+                                    <field name="deudor_terciario_dpi"/>
+                                    <field name="deudor_terciario_telefono"/>
+                                    <field name="deudor_terciario_email"/>
+                                    <field name="deudor_terciario_edad"/>
+                                </group>
+                                <group string="Información Laboral">
+                                    <field name="deudor_terciario_laborales_empresa"/>
+                                    <field name="deudor_terciario_laborales_puesto"/>
+                                    <field name="deudor_terciario_laborales_ingresos_mensuales"/>
+                                    <field name="deudor_terciario_laborales_fecha_ingreso"/>
+                                    <field name="deudor_terciario_laborales_telefono"/>
+                                    <field name="deudor_terciario_laborales_actividad_economica"/>
+                                    <field name="deudor_terciario_laborales_tiempo_trabajo"/>
+                                    <field name="deudor_terciario_laborales_direccion"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Observaciones -->
+                        <page string="Otros" name="observaciones">
+                            <label for="observaciones" string="Observaciones"/>
+                            <field name="observaciones" string="Observaciones"/>
+                            <label for="acuerdos_especiales" string="Acuerdos Especiales"/>
+                            <field name="acuerdos_especiales" string="Acuerdos Especiales"/>
+                            <label for="asesor" string="Asesor"/>
+                            <field name="asesor" string="Asesor"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_acuerdo_compra_venta_tree" model="ir.ui.view">
+        <field name="name">acuerdo.compra.venta.tree</field>
+        <field name="model">acuerdo.compra.venta</field>
+        <field name="arch" type="xml">
+            <tree>
+                <header>
+                    <button name="action_print_if_complete" 
+                            string="Imprimir Acuerdo" 
+                            type="object" 
+                            icon="fa-print"/>
+                </header>
+                <field name="order_id"/>
+                <field name="deudor_nombres"/>
+                <field name="deudor_apellidos"/>
+                <field name="proyecto_id"/>
+                <field name="state"/>
+                <field name="create_date"/>
+                <field name="is_complete" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_acuerdo_compra_venta" model="ir.actions.act_window">
+        <field name="name">Acuerdos de Compra Venta</field>
+        <field name="res_model">acuerdo.compra.venta</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo> 

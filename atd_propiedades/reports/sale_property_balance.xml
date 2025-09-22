@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="report_sale_balance">
+        <t t-call="web.basic_layout">
+        <t t-call="atd_propiedades.common_report_styles"/>
+            <t t-foreach="docs" t-as="o">
+                <div class="header">
+                    <t t-call="atd_propiedades.common_report_styles"/>
+                    <div class="row">
+                        <div class="col-12">
+                            <t t-if="o.proyecto_id.icon">
+                                <img t-att-src="image_data_uri(o.proyecto_id.icon)" alt="Atd Propiedades" style="width: 100%;"/>
+                            </t>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="page">
+                        <div class="section-header">Estado de cuenta</div>
+                            <table class="header-table">
+                                <tr>
+                                    <td>
+                                        <strong>Proyecto:</strong>
+                                    </td>
+                                    <td style="font-weight: normal;">
+                                        <span t-field="o.proyecto_id.name"/>
+                                    </td>
+                                    <td>
+                                        <strong>Propiedad:</strong>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.property_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Fecha:</strong>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.date_order" t-options='{"format": "dd/MM/yyyy"}'/>
+                                    </td>
+                                    <td>
+                                        <strong>Asesor:</strong>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.user_id.name"/>
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Cliente:</strong>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.partner_id.name"/>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+
+                        <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)" />
+                        <div class="section-header">Información de la Propiedad</div>
+                            <t t-set="numprop" t-value="0"/>
+                            <t t-foreach="o.order_line.filtered(lambda l: l.property_id)" t-as="line">
+                                <t t-if="numprop > 0">
+                                    <div class="section-header section-header-secondary">Propiedad Adicional</div>
+                                </t>
+                                <t t-set="numprop" t-value="numprop + 1"/>
+                                <table class="data-table">
+                                    <tr>
+                                        <td>
+                                            <t t-if="line.property_id.property_type_id.name == 'Apartamento'">
+                                                <strong>Modelo:</strong>
+                                            </t>
+                                            <t t-else="">
+                                                <strong>Nombre:</strong>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <span t-field="line.property_id.name"/>
+                                        </td>
+                                        <td>
+                                            <strong>Número:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="line.property_id.number"/>
+                                        </td>   
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <t t-if="line.property_id.property_type_id.name == 'Apartamento'">
+                                            <strong>Nivel:</strong>
+                                            </t>
+                                            <t t-else="">
+                                                <strong>Ubicación:</strong>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <span t-field="line.property_id.nivel"/>
+                                        </td>
+                                        <td>
+                                            <strong>Tipo:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="line.property_id.property_type_id.name"/>
+                                        </td>
+                                    </tr>
+                                    
+
+                                    <t t-if="line.property_id.property_type_id.name == 'Apartamento'">
+                                        <tr>
+                                            <td>
+                                                <strong>Vista:</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.property_id.vista"/>
+                                            </td>
+                                            <td>
+                                                <strong>Precio:</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.property_id.price" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Habitaciones:</strong>
+                                            </td>
+                                            <td>
+                                                <t t-if="line.property_id.bedrooms_description">
+                                                    <span t-field="line.property_id.bedrooms_description"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="line.property_id.bedrooms"/>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <strong>Baños:</strong>
+                                            </td>
+                                            <td>
+                                                <t t-if="line.property_id.bathrooms_description">
+                                                    <span t-field="line.property_id.bathrooms_description"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="line.property_id.bathrooms"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Parqueos:</strong>
+                                            </td>
+                                            <td>
+                                                <t t-if="line.property_id.parqueos_description">
+                                                    <span t-field="line.property_id.parqueos_description"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="line.property_id.parqueos"/>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <strong>Modelo:</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.property_id.property_model_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Área Apartamento:</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.property_id.area_apartamento"/> m²
+                                            </td>
+                                            <td>
+                                                <strong>Área Balcón:</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.property_id.area_balcon"/> m²
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Área Jardín:</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.property_id.area_jardin"/> m²
+                                            </td>
+                                            <td>
+                                                <strong>Área Total:</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.property_id.square_meters"/> m²
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    
+                                </table>
+                            </t>
+                    
+                        <div class="section-header">Condiciones de Venta</div>
+                        <table class="data-table">
+                            <tr>
+                                <td><strong>Precio Total:</strong></td>
+                                <td class="text-right"><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                <td><strong>Tipo de Crédito:</strong></td>
+                                <td class="text-right"><span t-field="o.tipo_credito"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Porcentaje Enganche:</strong></td>
+                                <td class="text-right"><span t-esc="o.enganche_percentage *100" /> %</td>
+                                <td><strong>Banco:</strong></td>
+                                <td class="text-right"><span t-field="o.banco_credito_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Monto Enganche:</strong></td>
+                                <td class="text-right"><span t-field="o.enganche_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                <td><strong>Enganche Pendiente:</strong></td>
+                                <td class="text-right"><span t-field="o.pending_enganche_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Número de Pagos:</strong></td>
+                                <td class="text-right"><span t-field="o.enganche_payments"/></td>
+                                <td><strong>Reserva:</strong></td>
+                                <td class="text-right"><span t-field="o.first_payment_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cuotas de:</strong></td>
+                                <td class="text-right"><span t-field="o.remaining_payment_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                    
+                        <div class="section-header section-header-secondary">Estado de cuenta</div>
+                        
+                        <table class="data-table table-striped" style="page-break-inside: auto;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><strong>No.</strong></th>
+                                    <th class="text-center"><strong>Fecha</strong></th>
+                                    <th class="text-center"><strong>Recibo</strong></th>
+                                    <th class="text-center"><strong>No. Depósito</strong></th>
+                                    <th class="text-center"><strong>Monto</strong></th>
+                                    <th class="text-center"><strong>Estado</strong></th>
+                                    <th class="text-center"><strong>Balance</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody style="page-break-inside: auto; display: table-row-group;">
+                                <t t-set="pagos" t-value="o.pago_enganche_ids.filtered(lambda p: p.state in ['due', 'received']).sorted(key=lambda p: (p.payment_number or 0, p.recibo_number or ''))"/>
+                                <t t-set="balance" t-value="o.enganche_amount"/>
+                                <t t-set="total_payments" t-value="0"/>
+                                <t t-set="excess_payment" t-value="0"/>
+                                
+                                <t t-foreach="pagos" t-as="pago">
+                                    <t t-if="pago.state in ['confirmed', 'received']">
+                                        <t t-set="total_payments" t-value="total_payments + pago.amount_received"/>
+                                        <t t-set="balance" t-value="o.enganche_amount - total_payments"/>
+                                        <t t-if="balance &lt; 0">
+                                            <t t-set="excess_payment" t-value="abs(balance)"/>
+                                            <t t-set="balance" t-value="0"/>
+                                        </t>
+                                    </t>
+                                    <tr style="page-break-inside: avoid;">
+                                        <td class="text-center"><span t-field="pago.payment_sequence"/></td>
+                                        <td class="text-center">
+                                            <t t-if="pago.received_date">
+                                                <span t-field="pago.received_date" t-options='{"format": "dd/MM/yyyy"}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="pago.expected_date" t-options='{"format": "dd/MM/yyyy"}'/>
+                                            </t>
+                                        </td>
+                                        <td class="text-center"><span t-field="pago.recibo_number"/></td>
+                                        <td class="text-center"><span t-field="pago.boleta"/></td>
+                                        
+                                        
+                                        <td class="text-right">
+                                            <t t-if="pago.state == 'due'">
+                                                <span t-field="pago.amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="pago.amount_received" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </t>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="pago.state" t-att-class="'badge ' + ('badge-danger' if pago.state == 'due' else 'badge-success' if pago.state in ['received', 'confirmed'] else '')"/>
+                                        </td>
+                                        <td class="text-right"><span t-esc="balance" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                    </tr>
+                                </t>
+                                
+                                <!-- Add total row if payments exceed enganche -->
+                                <t t-if="excess_payment &gt; 0">
+                                    <tr style="border-top: 2px solid #333; font-weight: bold;">
+                                        <td colspan="4" class="text-right"><strong>Total de pagos recibidos:</strong></td>
+                                        <td class="text-right"><strong><span t-esc="total_payments" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></strong></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    
+                    <!-- Alert for excess payments -->
+                    <t t-if="excess_payment &gt; 0">
+                        <div class="alert alert-warning" style="margin-bottom: 1rem; background-color: #fff3cd; border-color: #ffeaa7; color: #856404;">
+                            <strong>Atención:</strong> Los pagos recibidos ya superan el enganche acordado de  
+                            <span t-esc="o.enganche_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>.
+                            El monto total abonado será descontado del valor total de venta de la propiedad.
+                        </div>
+                    </t>
+                    
+                    <div class="alert alert-info" style="margin-bottom: 1rem;">
+                            El balance mostrado corresponde únicamente al enganche acordado de 
+                            <span t-field="o.enganche_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/> 
+                            en el acuerdo de compraventa sobre el valor total de venta de 
+                            <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>.
+                        </div>    
+                    </div>
+                    
+            </t>
+        </t>
+    </template>
+
+    
+
+    <record id="paperformat_sale_balance" model="report.paperformat">
+        <field name="name">Estado de cuenta COVISA Carta</field>
+        <field name="default" eval="True"/>
+        <field name="format">Letter</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_sale_balance" model="ir.actions.report">
+        <field name="name">Estado de cuenta</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">atd_propiedades.report_sale_balance</field>
+        <field name="report_file">atd_propiedades.report_sale_balance</field>
+        <field name="print_report_name">'Estado de cuenta - %s' % object.name</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_sale_balance"/>
+    </record>
+</odoo> 

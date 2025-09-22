@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="property_type_view_tree" model="ir.ui.view">
+        <field name="name">real.estate.property.type.tree</field>
+        <field name="model">real.estate.property.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="property_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="property_type_view_form" model="ir.ui.view">
+        <field name="name">real.estate.property.type.form</field>
+        <field name="model">real.estate.property.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(atd_propiedades.action_properties)d" 
+                                type="action" 
+                                class="oe_stat_button" 
+                                icon="fa-building" 
+                                context="{'default_property_type': active_id}">
+                            <field name="property_count" widget="statinfo" string="Properties"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="property_type_view_search" model="ir.ui.view">
+        <field name="name">real.estate.property.type.search</field>
+        <field name="model">real.estate.property.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_property_types" model="ir.actions.act_window">
+        <field name="name">Tipos de propiedades</field>
+        <field name="res_model">real.estate.property.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea el primer tipo de propiedad.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item (in Sales Configuration) -->
+    <menuitem id="menu_property_types"
+              name="Tipos de propiedad"
+              parent="sale.menu_sale_config"
+              action="action_property_types"
+              sequence="20"
+              groups="sales_team.group_sale_manager"/>
+</odoo>

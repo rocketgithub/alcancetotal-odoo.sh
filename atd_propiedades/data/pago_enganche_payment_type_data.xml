@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Payment Types -->
+        <record id="payment_type_deposito" model="pago.enganche.payment.type">
+            <field name="name">Depósito</field>
+            <field name="description">Pago mediante depósito bancario</field>
+        </record>
+
+        <record id="payment_type_cheque" model="pago.enganche.payment.type">
+            <field name="name">Cheque</field>
+            <field name="description">Pago mediante cheque bancario</field>
+        </record>
+
+        <record id="payment_type_efectivo" model="pago.enganche.payment.type">
+            <field name="name">Efectivo</field>
+            <field name="description">Pago en efectivo</field>
+        </record>
+
+        <record id="payment_type_tarjeta" model="pago.enganche.payment.type">
+            <field name="name">Tarjeta de Crédito</field>
+            <field name="description">Pago con tarjeta de crédito</field>
+        </record>
+        <record id="payment_type_ach" model="pago.enganche.payment.type">
+            <field name="name">Transferencia ACH</field>
+            <field name="description">Pago con Transferencia ACH</field>
+        </record>
+        <record id="payment_type_tercero" model="pago.enganche.payment.type">
+            <field name="name">Transferencia de Terceros</field>
+            <field name="description">Pago con Transferencia de terceros</field>
+        </record>
+    </data>
+</odoo> 
