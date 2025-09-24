@@ -101,7 +101,7 @@ class ReporteMayor(models.AbstractModel):
                 cuenta['saldo_final'] += cuenta['saldo_inicial'] + cuenta['total_debe'] - cuenta['total_haber']
 
             lineas = sorted(cuentas_agrupadas.values(), key=lambda l: l['codigo'])
-        else:
+        elif datos['agrupado_todo']:
 
             self.env.cr.execute('select a.id, a.code as codigo, a.name as cuenta, ' + include_initial_balance + ' as balance_inicial, sum(l.debit) as debe, sum(l.credit) as haber ' \
             	'from account_move_line l join account_account a on(l.account_id = a.id)' \
@@ -135,6 +135,70 @@ class ReporteMayor(models.AbstractModel):
                     l['saldo_final'] += l['saldo_inicial'] + l['debe'] - l['haber']
                     totales['saldo_inicial'] += l['saldo_inicial']
                     totales['saldo_final'] += l['saldo_final']
+        else:
+
+            self.env.cr.execute('select l.name as etiqueta, a.id, a.code as codigo, a.name as cuenta, l.date,' + include_initial_balance + ' as balance_inicial, sum(l.debit) as debe, sum(l.credit) as haber ' \
+            	'from account_move_line l join account_account a on(l.account_id = a.id)' \
+            	+ join_initial_balance + \
+            	'where l.parent_state = \'posted\' and a.id in ('+accounts_str+') and l.date >= %s and l.date <= %s group by l.name, a.id, a.code, a.name, l.date,' + include_initial_balance + ' ORDER BY a.code',
+            (datos['fecha_desde'], datos['fecha_hasta']))
+
+            for r in self.env.cr.dictfetchall():
+                totales['debe'] += r['debe']
+                totales['haber'] += r['haber']
+                linea = {
+                    'id': r['id'],
+                    'codigo': r['codigo'],
+                    'cuenta': r['cuenta'],
+                    'fecha': r['date'],
+                    'etiqueta': r['etiqueta'],
+                    'saldo_inicial': 0,
+                    'debe': r['debe'],
+                    'haber': r['haber'],
+                    'saldo_final': 0,
+                    'balance_inicial': r['balance_inicial']
+                }
+                lineas.append(linea)
+
+            # Group by account similar to agrupado_por_dia
+            cuentas_agrupadas = {}
+            llave = 'codigo'
+            for l in lineas:
+                if l[llave] not in cuentas_agrupadas:
+                    cuentas_agrupadas[l[llave]] = {
+                        'codigo': l[llave],
+                        'cuenta': l['cuenta'],
+                        'saldo_inicial': 0,
+                        'saldo_final': 0,
+                        'movimientos': [],
+                        'total_debe': 0,
+                        'total_haber': 0,
+                        'balance_inicial': l['balance_inicial']
+                    }
+
+                    if not l['balance_inicial']:
+                        cuentas_agrupadas[l[llave]]['saldo_inicial'] = self.retornar_saldo_inicial_inicio_anio(l['id'], datos['fecha_desde'])
+                    else:
+                        cuentas_agrupadas[l[llave]]['saldo_inicial'] = self.retornar_saldo_inicial_todos_anios(l['id'], datos['fecha_desde'])
+                
+                cuentas_agrupadas[l[llave]]['movimientos'].append(l)
+
+            for cuenta in cuentas_agrupadas.values():
+                # Sort movements by date to calculate running balance
+                cuenta['movimientos'] = sorted(cuenta['movimientos'], key=lambda m: m['fecha'])
+                
+                # Calculate running balance for each movement
+                saldo_corriente = cuenta['saldo_inicial']
+                for movimiento in cuenta['movimientos']:
+                    saldo_corriente += movimiento['debe'] - movimiento['haber']
+                    movimiento['saldo_movimiento'] = saldo_corriente
+                    cuenta['total_debe'] += movimiento['debe']
+                    cuenta['total_haber'] += movimiento['haber']
+                cuenta['saldo_final'] = cuenta['saldo_inicial'] + cuenta['total_debe'] - cuenta['total_haber']
+                totales['saldo_inicial'] += cuenta['saldo_inicial']
+                totales['saldo_final'] += cuenta['saldo_final']
+
+            lineas = sorted(cuentas_agrupadas.values(), key=lambda l: l['codigo'])
 
         return {'lineas': lineas,'totales': totales }
 

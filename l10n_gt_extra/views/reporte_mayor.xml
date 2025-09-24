@@ -129,7 +129,7 @@
                                 </t>
                             </tbody>
                         </t>
-                        <t t-else="">
+                        <t t-elif="data['agrupado_todo'] == true">
                             <thead>
                                 <tr>
                                     <th>Codigo</th>
@@ -173,6 +173,76 @@
                                 <b><span t-esc="result['totales']['haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
                             </td>
                             <td></td>
+                        </tr>
+                </tbody>
+            </t>
+            <t t-else="">
+                <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Cuenta</th>
+                                    <th>Fecha</th>
+                                    <th>Descripcion</th>
+                                    <th class="text-right">Saldo Inicial</th>
+                                    <th class="text-right">Debe</th>
+                                    <th class="text-right">Haber</th>
+                                    <th class="text-right">Saldo Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="result['lineas']" t-as="l">
+                                    <!-- Account header row -->
+                                    <tr style="background-color: #f8f9fa; font-weight: bold;">
+                                        <td>
+                                            <span t-esc="l['codigo']"/>
+                                        </td>
+                                        <td colspan="2">
+                                            <span t-esc="l['cuenta']"/>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="l['saldo_inicial']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="l['total_debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="l['total_haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="l['saldo_final']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                    <!-- Detail rows for each movement -->
+                                    <t t-foreach="l['movimientos']" t-as="movimiento">
+                                        <tr>
+                                            <td colspan="2"></td>
+                                            <td><span t-esc="movimiento['fecha']" t-options='{"widget": "date"}'/></td>
+                                            <td><span t-esc="movimiento['etiqueta']"/></td>
+                                            <td></td>
+                                            <td class="text-right"><span t-esc="movimiento['debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></td>
+                                            <td class="text-right"><span t-esc="movimiento['haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></td>
+                                            <td class="text-right"><span t-esc="movimiento['saldo_movimiento']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                        <tr style="border-top: 2px solid #333;">
+                            <td colspan="3" style="text-align: right; padding-right: 8px;">
+                                <b>Totales:</b>
+                            </td>
+                            <td class="text-right">
+                                <b><span t-esc="result['totales']['saldo_inicial']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                            </td>
+                            <td class="text-right">
+                                <b><span t-esc="result['totales']['debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                            </td>
+                            <td class="text-right">
+                                <b><span t-esc="result['totales']['haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                            </td>
+                            <td class="text-right">
+                                <b><span t-esc="result['totales']['saldo_final']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
+                            </td>
                         </tr>
                 </tbody>
             </t>

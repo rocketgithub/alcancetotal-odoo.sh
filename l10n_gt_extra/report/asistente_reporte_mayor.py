@@ -24,6 +24,7 @@ class AsistenteReporteMayor(models.TransientModel):
     cuentas_id = fields.Many2many("account.account", string="Cuentas", required=True, default=_default_cuenta)
     folio_inicial = fields.Integer(string="Folio Inicial", required=True, default=1)
     agrupado_por_dia = fields.Boolean(string="Agrupado por dia")
+    agrupado_todo = fields.Boolean(string="Agrupado todo el periodo")
     fecha_desde = fields.Date(string="Fecha Inicial", required=True, default=lambda self: time.strftime('%Y-%m-01'))
     fecha_hasta = fields.Date(string="Fecha Final", required=True, default=lambda self: time.strftime('%Y-%m-%d'))
     name = fields.Char('Nombre archivo', size=32)
