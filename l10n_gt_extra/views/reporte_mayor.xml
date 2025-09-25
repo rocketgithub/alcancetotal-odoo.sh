@@ -8,6 +8,9 @@
             <div class="header">
                 Folio: <span class="page" t-esc="data['folio_inicial']-1"></span>
             </div>
+            <div class="footer" style="display: none;">
+                        
+            </div>
             <t t-call="web.external_layout">
                 <div class="page">
                     <style>
@@ -183,6 +186,7 @@
                                     <th>Cuenta</th>
                                     <th>Fecha</th>
                                     <th>Descripcion</th>
+                                    <th>Contacto</th>
                                     <th class="text-right">Saldo Inicial</th>
                                     <th class="text-right">Debe</th>
                                     <th class="text-right">Haber</th>
@@ -196,7 +200,7 @@
                                         <td>
                                             <span t-esc="l['codigo']"/>
                                         </td>
-                                        <td colspan="2">
+                                        <td colspan="3">
                                             <span t-esc="l['cuenta']"/>
                                         </td>
                                         <td>
@@ -217,9 +221,11 @@
                                     <!-- Detail rows for each movement -->
                                     <t t-foreach="l['movimientos']" t-as="movimiento">
                                         <tr>
-                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td></td>
                                             <td><span t-esc="movimiento['fecha']" t-options='{"widget": "date"}'/></td>
                                             <td><span t-esc="movimiento['etiqueta']"/></td>
+                                            <td><span t-esc="movimiento['partner_name']"/></td>
                                             <td></td>
                                             <td class="text-right"><span t-esc="movimiento['debe']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></td>
                                             <td class="text-right"><span t-esc="movimiento['haber']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></td>
@@ -228,9 +234,10 @@
                                     </t>
                                 </t>
                         <tr style="border-top: 2px solid #333;">
-                            <td colspan="3" style="text-align: right; padding-right: 8px;">
+                            <td colspan="4" style="text-align: right; padding-right: 8px;">
                                 <b>Totales:</b>
                             </td>
+                            <td></td>
                             <td class="text-right">
                                 <b><span t-esc="result['totales']['saldo_inicial']" t-options="{'widget': 'monetary', 'display_currency': current_company_id.currency_id}"/></b>
                             </td>

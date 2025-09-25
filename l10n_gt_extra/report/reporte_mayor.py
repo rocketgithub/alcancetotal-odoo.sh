@@ -136,11 +136,14 @@ class ReporteMayor(models.AbstractModel):
                     totales['saldo_inicial'] += l['saldo_inicial']
                     totales['saldo_final'] += l['saldo_final']
         else:
+            # Always include move name and use move.ref as fallback for null etiqueta
+            etiqueta_select = "CONCAT(m.name, ' - ', COALESCE(NULLIF(l.name, ''), m.ref, 'Sin descripción')) as etiqueta"
+            group_by_etiqueta = "m.name, l.name, m.ref"
 
-            self.env.cr.execute('select l.name as etiqueta, a.id, a.code as codigo, a.name as cuenta, l.date,' + include_initial_balance + ' as balance_inicial, sum(l.debit) as debe, sum(l.credit) as haber ' \
-            	'from account_move_line l join account_account a on(l.account_id = a.id)' \
-            	+ join_initial_balance + \
-            	'where l.parent_state = \'posted\' and a.id in ('+accounts_str+') and l.date >= %s and l.date <= %s group by l.name, a.id, a.code, a.name, l.date,' + include_initial_balance + ' ORDER BY a.code',
+            self.env.cr.execute('select ' + etiqueta_select + ', p.name as partner_name, a.id, a.code as codigo, a.name as cuenta, l.date,' + include_initial_balance + ' as balance_inicial, sum(l.debit) as debe, sum(l.credit) as haber ' \
+            	'from account_move_line l join account_account a on(l.account_id = a.id) join account_move m on(l.move_id = m.id) left join res_partner p on(l.partner_id = p.id)' \
+            	+ join_initial_balance + ' ' \
+            	'where l.parent_state = \'posted\' and a.id in ('+accounts_str+') and l.date >= %s and l.date <= %s group by ' + group_by_etiqueta + ', p.name, a.id, a.code, a.name, l.date,' + include_initial_balance + ' ORDER BY a.code',
             (datos['fecha_desde'], datos['fecha_hasta']))
 
             for r in self.env.cr.dictfetchall():
@@ -152,6 +155,7 @@ class ReporteMayor(models.AbstractModel):
                     'cuenta': r['cuenta'],
                     'fecha': r['date'],
                     'etiqueta': r['etiqueta'],
+                    'partner_name': r['partner_name'] or '',
                     'saldo_inicial': 0,
                     'debe': r['debe'],
                     'haber': r['haber'],
