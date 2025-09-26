@@ -119,7 +119,7 @@
                         </div>
 
                         
-                        <!-- New Balance Information -->
+                        <!-- Balance Information -->
                         <div class="row ">
                             <div class="col-8">
                                 <strong>Saldo anterior de enganche:</strong>
@@ -138,24 +138,71 @@
                                       t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>
                             </div>
                         </div>
-                        <div class="row ">
-                            <div class="col-8">
-                                <strong>Nuevo saldo de enganche:</strong>
-                            </div>
-                            <div class="col-4 text-right">
-                                <span t-field="o.new_balance"
-                                      t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>
-                            </div>
-                        </div>
-                        <div class="row">
-
-                            <div class="col-12" style="margin-bottom: 1rem;">
-                                El saldo mostrado corresponde únicamente al saldo del enganche acordado de 
-                                <span t-field="o.order_id.enganche_amount" t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/> 
-                                en el acuerdo de compraventa sobre el valor total de venta de 
-                                <span t-field="o.order_id.amount_total" t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>.
-                            </div>    
                         
+                        <!-- Show overpayment information if applicable -->
+                        <t t-if="o.is_overpayment">
+                            <div class="row ">
+                                <div class="col-8">
+                                    <strong>Nuevo saldo de enganche:</strong>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <span t-field="o.new_balance"
+                                          t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>
+                                </div>
+                            </div>
+                            <div class="row " style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 5px 0;">
+                                <div class="col-8">
+                                    <strong style="color: #856404;">Pago en exceso:</strong>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <strong style="color: #856404;">
+                                        <span t-field="o.overpayment_amount"
+                                              t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="row " style="background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 10px; margin: 5px 0;">
+                                <div class="col-8">
+                                    <strong style="color: #0c5460;">Total pagado a la fecha:</strong>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <strong style="color: #0c5460;">
+                                        <span t-field="o.total_paid_to_date"
+                                              t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                        
+                        <!-- Show normal balance if no overpayment -->
+                        <t t-if="not o.is_overpayment">
+                            <div class="row ">
+                                <div class="col-8">
+                                    <strong>Nuevo saldo de enganche:</strong>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <span t-field="o.new_balance"
+                                          t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>
+                                </div>
+                            </div>
+                        </t>
+                        <div class="row">
+                            <div class="col-12" style="margin-bottom: 1rem;">
+                                <t t-if="o.is_overpayment">
+                                    <strong style="color: #856404;">NOTA IMPORTANTE:</strong> El monto del enganche acordado de 
+                                    <span t-field="o.order_id.enganche_amount" t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/> 
+                                    ha sido completado. El pago adicional de 
+                                    <span t-field="o.overpayment_amount" t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/> 
+                                    se considera un abono anticipado al valor total de venta de 
+                                    <span t-field="o.order_id.amount_total" t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>.
+                                </t>
+                                <t t-if="not o.is_overpayment">
+                                    El saldo mostrado corresponde únicamente al saldo del enganche acordado de 
+                                    <span t-field="o.order_id.enganche_amount" t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/> 
+                                    en el acuerdo de compraventa sobre el valor total de venta de 
+                                    <span t-field="o.order_id.amount_total" t-options='{"widget": "monetary", "display_currency": o.order_id.currency_id}'/>.
+                                </t>
+                            </div>    
                         </div>
                         <div class="row">
                             <div class="col-12 text-center">

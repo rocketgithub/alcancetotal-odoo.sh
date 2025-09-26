@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _, Command
 import logging
 import base64
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -148,6 +148,30 @@ class PagoEnganche(models.Model):
         string='Moneda',
         related='order_id.currency_id',
         store=True,
+    )
+
+    # Overpayment tracking fields
+    is_overpayment = fields.Boolean(
+        string='Es Sobrepago',
+        compute='_compute_balances',
+        store=False,
+        help='Indica si este pago resulta en un sobrepago del enganche'
+    )
+
+    overpayment_amount = fields.Monetary(
+        string='Monto de Sobrepago',
+        compute='_compute_balances',
+        currency_field='currency_id',
+        store=False,
+        help='Monto pagado en exceso del enganche acordado'
+    )
+
+    total_paid_to_date = fields.Monetary(
+        string='Total Pagado a la Fecha',
+        compute='_compute_balances',
+        currency_field='currency_id',
+        store=False,
+        help='Total pagado incluyendo este pago'
     )
 
     banco_emisor_id = fields.Many2one(
@@ -317,6 +341,9 @@ class PagoEnganche(models.Model):
             if not record.order_id:
                 record.previous_balance = 0
                 record.new_balance = 0
+                record.is_overpayment = False
+                record.overpayment_amount = 0
+                record.total_paid_to_date = 0
                 continue
                 
             # Get all valid payments for this order (received or confirmed, not anulado)
@@ -348,14 +375,27 @@ class PagoEnganche(models.Model):
             # Get total enganche amount from sale order
             total_to_pay = record.order_id.enganche_amount
             
-            # Calculate previous balance
-            record.previous_balance = total_to_pay - total_paid
+            # Calculate previous balance (minimum 0 to avoid negative balances)
+            record.previous_balance = max(0, total_to_pay - total_paid)
             
-            # Calculate new balance
+            # Calculate values including current payment
             if record.state in ['received', 'confirmed']:
-                record.new_balance = record.previous_balance - record.amount_received
+                current_payment = record.amount_received
             else:
-                record.new_balance = record.previous_balance
+                current_payment = 0
+                
+            # Total paid including current payment
+            record.total_paid_to_date = total_paid + current_payment
+            
+            # Check for overpayment
+            if record.total_paid_to_date > total_to_pay:
+                record.is_overpayment = True
+                record.overpayment_amount = record.total_paid_to_date - total_to_pay
+                record.new_balance = 0  # Balance is 0 when overpaid
+            else:
+                record.is_overpayment = False
+                record.overpayment_amount = 0
+                record.new_balance = max(0, total_to_pay - record.total_paid_to_date)
 
     def action_send_receipt_email(self):
         self.ensure_one()

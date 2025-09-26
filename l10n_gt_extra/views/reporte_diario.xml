@@ -7,6 +7,9 @@
             <div class="header">
                 Folio: <span class="page" t-esc="data['folio_inicial']-1"></span>
             </div>
+            <div class="footer" style="display: none;">
+                        
+            </div>
             <t t-call="web.external_layout">
                 <div class="page">
                     <style>
