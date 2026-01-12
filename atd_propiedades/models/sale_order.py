@@ -247,14 +247,24 @@ class SaleOrder(models.Model):
             # Last payment adjusts for rounding differences
             last_payment_amount = round(remaining_amount - total_regular_payments, 2)
             
+            # Determine the base date for new payments
+            # Use the last confirmed payment's date if available, otherwise use first_payment_date
+            if confirmed_payments:
+                base_date = confirmed_payments[-1].expected_date
+            else:
+                base_date = self.first_payment_date
+            
             for i in range(new_payments_count):
                 amount = last_payment_amount if i == new_payments_count - 1 else payment_amount
+                # Add months from the base date (last confirmed payment or first payment date)
+                # i+1 because we want the first new payment to be 1 month after the base date
+                expected_date = base_date + relativedelta(months=i+1)
                 self.env['pago.enganche'].create({
                     'order_id': self.id,
                     'amount': amount,
                     'payment_number': next_payment_number + i,
                     'total_payments': self.enganche_payments,
-                    'expected_date': self.first_payment_date + relativedelta(months=next_payment_number-1+i),
+                    'expected_date': expected_date,
                     'state': 'draft'
                 })
         
