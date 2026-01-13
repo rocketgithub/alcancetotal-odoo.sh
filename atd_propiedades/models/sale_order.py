@@ -248,8 +248,9 @@ class SaleOrder(models.Model):
             last_payment_amount = round(remaining_amount - total_regular_payments, 2)
             
             # Determine the base date for new payments
-            # Use the last confirmed payment's date if available, otherwise use first_payment_date
-            if confirmed_payments:
+            # Use the last confirmed payment's date only if there is more than 1 confirmed payment,
+            # otherwise use first_payment_date
+            if len(confirmed_payments) > 1:
                 base_date = confirmed_payments[-1].expected_date
             else:
                 base_date = self.first_payment_date
