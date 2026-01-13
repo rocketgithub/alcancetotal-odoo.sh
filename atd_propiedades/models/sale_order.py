@@ -248,8 +248,8 @@ class SaleOrder(models.Model):
             last_payment_amount = round(remaining_amount - total_regular_payments, 2)
             
             # Determine the base date for new payments
-            # Use the last confirmed payment's date only if there is more than 1 confirmed payment,
-            # otherwise use first_payment_date
+            # If there is more than 1 confirmed payment, use the last confirmed payment's date
+            # Otherwise, use first_payment_date
             if len(confirmed_payments) > 1:
                 base_date = confirmed_payments[-1].expected_date
             else:
@@ -257,9 +257,14 @@ class SaleOrder(models.Model):
             
             for i in range(new_payments_count):
                 amount = last_payment_amount if i == new_payments_count - 1 else payment_amount
-                # Add months from the base date (last confirmed payment or first payment date)
-                # i+1 because we want the first new payment to be 1 month after the base date
-                expected_date = base_date + relativedelta(months=i+1)
+                # Calculate months delta based on whether we have multiple confirmed payments
+                # If more than 1 confirmed payment: add i+1 months from last confirmed payment
+                # Otherwise: use (next_payment_number-1+i) months from first_payment_date
+                if len(confirmed_payments) > 1:
+                    months_delta = i + 1
+                else:
+                    months_delta = next_payment_number - 1 + i
+                expected_date = base_date + relativedelta(months=months_delta)
                 self.env['pago.enganche'].create({
                     'order_id': self.id,
                     'amount': amount,
